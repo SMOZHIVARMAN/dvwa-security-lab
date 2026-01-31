@@ -1,8 +1,9 @@
 # 🤝 Contributing to DVWA Security Lab
 
-Thank you for your interest in contributing to this **DVWA Security Lab** project.
+Thank you for your interest in contributing to the **DVWA Security Lab** project.
 
-This repository is created **strictly for educational and ethical security learning purposes**. All contributions must follow responsible disclosure and ethical hacking principles.
+This repository is created **strictly for educational and ethical security learning purposes**.  
+All contributions must follow responsible disclosure and ethical hacking principles.
 
 ---
 
@@ -12,69 +13,105 @@ The goal of this project is to:
 - Help learners understand common web vulnerabilities
 - Practice attacks in a **controlled and legal environment**
 - Document security experiments clearly for academic and learning use
+- Encourage **high-quality contributions** through a transparent leaderboard system
 
 ---
 
-## ✅ What You Can Contribute
-
-We welcome the following types of contributions:
-
-- 📄 New vulnerability experiment documentation  
-- 🧪 Improvements to existing experiment READMEs  
-- 📸 Screenshots demonstrating vulnerabilities  
-- 🛠️ Documentation fixes or enhancements  
-- 🧩 Setup or troubleshooting improvements  
-
----
 ## 🏆 Leaderboard & Scoring System
 
-This project maintains a **community leaderboard**.
+This project maintains a **community leaderboard** to recognize meaningful contributions.
 
-- Only **merged Pull Requests** are scored
-- Scores are calculated **automatically** using GitHub Actions
-- Contributors **must not edit the leaderboard manually**
+### Important Rules
+- ✅ Only **merged Pull Requests** are scored  
+- 🤖 Scores are calculated **automatically using GitHub Actions**  
+- 🚫 Contributors **must not edit `LEADERBOARD.md` manually**  
 
-### 🧮 Scoring Rules
+---
 
-**Base Submission**
-- Merged Pull Request: +2 points
+## 🧮 Scoring Rules
 
-**DVWA Security Level**  
+### ✅ Base Submission
+- Merged Pull Request: **+2 points**
+
+### 🔐 DVWA Security Level  
 (The level must be clearly mentioned in `README.md`)
-- Low: +2
-- Medium: +3
-- High: +4
-- Impossible: +5
 
-**Documentation Quality**
-- `README.md` present: +4
-- `screenshots/` folder with valid images: +5
+| Level | Points |
+|-------|--------|
+| Low   | +2     |
+| Medium| +3     |
+| High  | +4     |
+| Impossible | +5  |
 
-**Penalties**
-- Fake / copied / misleading submission: **−10**
-- Spam or empty Pull Request: **−10**
+> 📌 Security level is verified and labeled by the maintainer.
 
-⚠️ Penalties subtract from existing score.
+### 📄 Documentation Quality
 
-## 🏷️ Pull Request Labels (Important)
+| Requirement | Points |
+|-------------|--------|
+| `README.md` present | +4 |
+| `screenshots/` folder with valid images | +5 |
 
-Labels are applied **only by the maintainer** after review.
+### 🚫 Penalties (Strict)
 
-They are used for:
-- Defining DVWA security level
-- Identifying fake or invalid submissions
-- Automating leaderboard scoring
+| Violation | Penalty |
+|-----------|---------|
+| Fake / copied / misleading submission | **−10** |
+| Spam or empty Pull Request | **−10** |
 
-**Security Level Labels**
+⚠️ Penalties subtract from existing score.  
+⚠️ If a penalty is applied, **no positive points are added** for that submission.
+
+---
+
+## 🏷️ Pull Request Labels (Very Important)
+
+Labels are **applied only by the maintainer after manual review**.  
+They are used by GitHub Actions to calculate scores.
+
+### 🔐 Security Level Labels
 - `level:low`
 - `level:medium`
 - `level:high`
 - `level:impossible`
 
-**Penalty Label**
+### 🚫 Penalty Label
 - `fake`
 
-📌 Contributors must **not** apply labels themselves.
+📌 Contributors **must not** apply labels themselves.
+
+---
+
+## 👤 Contributor Responsibilities
+
+As a contributor, you must:
+- Follow the required folder structure
+- Include clear and original documentation
+- Mention the DVWA security level in `README.md`
+- Submit honest, DVWA-only experiments
+- Open a Pull Request from a feature branch
+
+You must **not**:
+- Edit the leaderboard
+- Push directly to `main`
+- Apply labels
+- Submit copied or fake content
+
+---
+
+## 👨‍⚖️ Maintainer Responsibilities
+
+The maintainer will:
+- Review all submissions manually
+- Verify DVWA-only testing
+- Decide the security level
+- Apply appropriate labels
+- Detect fake or invalid submissions
+- Merge or reject Pull Requests
+
+After merge, **GitHub Actions automatically updates the leaderboard**.
+
+---
 
 ## 🚫 What Is NOT Allowed
 
@@ -83,17 +120,18 @@ To keep this project safe and ethical, the following are **strictly prohibited**
 - Attacks against real or external systems  
 - Uploading exploit tools, malware, or hacking frameworks  
 - Automated attacks on non-DVWA targets  
-- Publishing real credentials or sensitive personal data  
-- Internet-exposed or production deployment configurations  
+- Publishing real credentials or personal data  
+- Internet-exposed or production deployments  
 
 ---
 
 ## 📁 Required Folder Structure
 
-Each experiment must follow this structure:
+Each experiment must follow **exactly** this structure:
+
 
 ```text
-experiments/
+Experiments/
 └── vulnerability-name/
     ├── README.md
     └── screenshots/
@@ -101,101 +139,126 @@ experiments/
         ├── payload.png
         └── result.png
 ```
-### ❗ Contributions that do not follow this structure may be rejected or penalized.
+
+
+### ❗ Submissions not following this structure may be rejected or penalized.
 
 ## 📝 Experiment README Guidelines
+Each README.md must include:
 
-- Each experiment README.md must include:
+- **Objective** – What vulnerability is tested
 
-- Objective – What vulnerability is being tested
+- **Environment** – OS, DVWA version, security level
 
-- Environment – OS, application, and security level
+- **Steps Performed** – Clear numbered steps
 
-- Steps Performed – Clear, numbered steps
+- **Payload Used** – Input or exploit string
 
-- Payload Used – Input or exploit string
+- **Screenshots Reference** – Mention screenshots folder
 
-- Screenshots Reference – Mention screenshots folder
+- **Observation** – What happened
 
-- Observation – What happened
+- **Impact** – Security risk explained
 
-- Impact – Security risk explained
+- **Mitigation** – How to prevent the vulnerability
 
-- Mitigation – How to prevent the vulnerability
+- **Conclusion** – Summary of the experiment
 
-- Conclusion – Summary of the experiment
-
+Missing sections may reduce score.
 
 ## 📸 Screenshot Guidelines
-- Use clear and meaningful file names (payload.png, result.png)
-
-- Avoid uploading unnecessary or duplicate images
-
+- Use clear names (payload.png, result.png)
+- Avoid duplicates or unnecessary images
 - Do not include personal information
+- Screenshots must clearly show the outcome
 
-- Screenshots should clearly show the outcome of the experiment
+---
 
 ## 🔀 How to Contribute (Step-by-Step)
-### Fork this repository
 
-### Clone your fork:
+
+1️⃣ **Fork this repository**
+
+   Click Fork on GitHub to create your own copy.
+
+2️⃣ **Clone your fork**  
 ```
 git clone https://github.com/your-username/dvwa-security-lab.git
+cd dvwa-security-lab
 ```
-### Create a new branch:
+
+
+3️⃣ **Add the original repository as upstream (Recommended)** 
+``` 
+git remote add upstream https://github.com/SMOZHIVARMAN/dvwa-security-lab.git
+```
+
+Verify:
+```
+git remote -v
+```
+
+
+4️⃣ **Sync with upstream before starting work**  
+```
+git checkout main
+git pull upstream main
+```
+
+5️⃣ **Create a feature branch**  
 ```
 git checkout -b feature/your-feature-name
 ```
-- Make your changes following the project guidelines
 
-### Commit your changes:
+
+6️⃣ **Make your changes**  
 ```
-git commit -m "Added SQL Injection experiment"
+ Follow all project rules and folder structure.
 ```
-### Push to your fork:
+7️⃣ **Commit your changes**  
 ```
+git commit -m "feat: add SQL Injection experiment (high)"
+```
+Use clear, meaningful commit messages.
+
+8️⃣ **Push to your fork** 
+``` 
 git push origin feature/your-feature-name
 ```
-### Open a Pull Request (PR)
 
-- 🧾 Commit Message Guidelines
-Use clear and meaningful commit messages
+
+9️⃣ **Open a Pull Request**  
+- Base branch: `main`
+- Compare branch: your feature branch
 
 📌 Leaderboard points are awarded automatically after PR review and merge.
 
-
-### Example:
-
-- Added XSS experiment documentation
-- Avoid vague messages like update or fix
+---
 
 ## 🔐 Ethical Reminder
-- This project follows ethical hacking principles.
 
-- By contributing, you agree that:
+By contributing, you agree that:
 
 - All experiments are performed only on DVWA
-
 - No real systems are attacked
-
 - All content is for learning and defensive awareness
 
+---
+
 ## 👥 Code of Conduct
+
 - Be respectful and constructive
-
 - Provide helpful feedback
-
 - Avoid offensive or abusive language
 
+---
+
 ## 📬 Questions or Suggestions?
-- If you have questions or suggestions:
 
-- Open an Issue
-
+- Open an [Issue](https://github.com/SMOZHIVARMAN/dvwa-security-lab/issues)
 - Or submit a Pull Request
 
-- Thank you for helping improve this DVWA Security Lab 🚀
+Thank you for helping improve the DVWA Security Lab 🚀  
 Your contribution helps others learn security the right way.
-
 
 ---
