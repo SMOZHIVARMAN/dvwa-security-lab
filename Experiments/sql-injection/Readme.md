@@ -61,9 +61,7 @@ DVWA → SQL Injection
 
 ### Screenshots of the attack and output are available in the screenshots/ folder:
 
-- payload.png
-
-- result.png
+- sql-injection.png
 
 ## 🔍 Observation
 - The application returned all user records instead of a single user.
