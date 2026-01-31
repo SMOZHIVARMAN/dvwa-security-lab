@@ -1,0 +1,41 @@
+name: Update Leaderboard
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  update:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update leaderboard
+        run: |
+          USER="${{ github.event.pull_request.user.login }}"
+          FILE="LEADERBOARD.md"
+
+          if ! grep -q "| $USER |" "$FILE"; then
+            echo "| $USER | 10 |" >> "$FILE"
+          else
+            awk -v user="$USER" '
+              $0 ~ "\\| "user" \\|" {
+                split($0,a,"|");
+                points=a[3]+10;
+                print "| "user" | "points" |";
+                next
+              }
+              { print }
+            ' "$FILE" > temp && mv temp "$FILE"
+          fi
+
+      - name: Commit leaderboard update
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add LEADERBOARD.md
+          git commit -m "chore: update leaderboard"
+          git push
