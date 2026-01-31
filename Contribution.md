@@ -26,6 +26,55 @@ We welcome the following types of contributions:
 - 🧩 Setup or troubleshooting improvements  
 
 ---
+## 🏆 Leaderboard & Scoring System
+
+This project maintains a **community leaderboard**.
+
+- Only **merged Pull Requests** are scored
+- Scores are calculated **automatically** using GitHub Actions
+- Contributors **must not edit the leaderboard manually**
+
+### 🧮 Scoring Rules
+
+**Base Submission**
+- Merged Pull Request: +2 points
+
+**DVWA Security Level**  
+(The level must be clearly mentioned in `README.md`)
+- Low: +2
+- Medium: +3
+- High: +4
+- Impossible: +5
+
+**Documentation Quality**
+- `README.md` present: +4
+- `screenshots/` folder with valid images: +5
+
+**Penalties**
+- Fake / copied / misleading submission: **−10**
+- Spam or empty Pull Request: **−10**
+
+⚠️ Penalties subtract from existing score.
+
+## 🏷️ Pull Request Labels (Important)
+
+Labels are applied **only by the maintainer** after review.
+
+They are used for:
+- Defining DVWA security level
+- Identifying fake or invalid submissions
+- Automating leaderboard scoring
+
+**Security Level Labels**
+- `level:low`
+- `level:medium`
+- `level:high`
+- `level:impossible`
+
+**Penalty Label**
+- `fake`
+
+📌 Contributors must **not** apply labels themselves.
 
 ## 🚫 What Is NOT Allowed
 
@@ -52,7 +101,7 @@ experiments/
         ├── payload.png
         └── result.png
 ```
-### ❗ Contributions that do not follow this structure may be rejected.
+### ❗ Contributions that do not follow this structure may be rejected or penalized.
 
 ## 📝 Experiment README Guidelines
 
@@ -111,6 +160,10 @@ git push origin feature/your-feature-name
 
 - 🧾 Commit Message Guidelines
 Use clear and meaningful commit messages
+
+📌 Leaderboard points are awarded automatically after PR review and merge.
+
+
 ### Example:
 
 - Added XSS experiment documentation
