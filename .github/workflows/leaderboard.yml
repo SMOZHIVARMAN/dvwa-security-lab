@@ -8,7 +8,7 @@ on:
     types: [closed]
 
 jobs:
-  update:
+  leaderboard:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
@@ -16,23 +16,67 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Calculate score
+        id: score
+        run: |
+          SCORE=0
+          USER="${{ github.event.pull_request.user.login }}"
+
+          # Base points
+          SCORE=$((SCORE + 2))
+
+          # Files changed in PR
+          git fetch origin main
+          FILES=$(git diff --name-only origin/main...HEAD)
+
+          # README check
+          if echo "$FILES" | grep -qi "README.md"; then
+            SCORE=$((SCORE + 4))
+          fi
+
+          # screenshots check
+          if echo "$FILES" | grep -qi "screenshots/"; then
+            SCORE=$((SCORE + 5))
+          fi
+
+          # Labels
+          LABELS="${{ join(github.event.pull_request.labels.*.name, ' ') }}"
+
+          if echo "$LABELS" | grep -q "level:low"; then
+            SCORE=$((SCORE + 2))
+          elif echo "$LABELS" | grep -q "level:medium"; then
+            SCORE=$((SCORE + 3))
+          elif echo "$LABELS" | grep -q "level:high"; then
+            SCORE=$((SCORE + 4))
+          elif echo "$LABELS" | grep -q "level:impossible"; then
+            SCORE=$((SCORE + 5))
+          fi
+
+          # Fake penalty
+          if echo "$LABELS" | grep -q "^fake$"; then
+            SCORE=-10
+          fi
+
+          echo "final_score=$SCORE" >> $GITHUB_OUTPUT
+
       - name: Update leaderboard
         run: |
           USER="${{ github.event.pull_request.user.login }}"
+          SCORE="${{ steps.score.outputs.final_score }}"
           FILE="LEADERBOARD.md"
 
-          if ! grep -q "| $USER |" "$FILE"; then
-            echo "| $USER | 10 |" >> "$FILE"
-          else
-            awk -v user="$USER" '
+          if grep -q "| $USER |" "$FILE"; then
+            awk -v user="$USER" -v score="$SCORE" '
               $0 ~ "\\| "user" \\|" {
                 split($0,a,"|");
-                points=a[3]+10;
-                print "| "user" | "points" |";
+                total=a[3]+score;
+                print "| "user" | "total" |";
                 next
               }
               { print }
             ' "$FILE" > temp && mv temp "$FILE"
+          else
+            echo "| $USER | $SCORE |" >> "$FILE"
           fi
 
       - name: Commit leaderboard update
