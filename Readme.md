@@ -35,7 +35,7 @@ This repository provides a **tested and MySQL-8 compatible installation guide** 
 
 - Ubuntu Linux
 - Internet connection
-- `sudo` privileges
+- `sudo`  privileges
 - Git installed
 
 ---
@@ -50,11 +50,11 @@ sudo apt update && sudo apt upgrade -y
 ###
 ### 🔹 Step 2: Install Apache
 ```
-sudo apt install apache2 -y
+sudo apt install apache2 -y 
 ```
 ### 🔹 Verify:
 ```
-http://localhost
+  http://localhost
 ```
 
 ### 🔹 Step 3: Install MySQL
@@ -241,4 +241,4 @@ DVWA is now fully configured and operational.
 
 ## 📝 License
 
-DVWA is open-source and provided for **educational purposes only**.
+DVWA is open-source and provided for **educational purposes only**.  
