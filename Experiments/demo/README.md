@@ -1,0 +1,1 @@
+DVWA Security Level: High
