@@ -6,26 +6,12 @@ permissions:
 on:
   pull_request:
     types: [closed]
-  push:
-    branches:
-      - main
 
 jobs:
-  capture-pr-author:
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    outputs:
-      pr_author: ${{ steps.author.outputs.author }}
-    steps:
-      - name: Capture PR author
-        id: author
-        run: |
-          echo "author=${{ github.event.pull_request.user.login }}" >> "$GITHUB_OUTPUT"
-
   update-leaderboard:
-    if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    needs: capture-pr-author
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,27 +22,19 @@ jobs:
       - name: Determine contributor
         id: user
         run: |
-          if [ -n "${{ needs.capture-pr-author.outputs.pr_author }}" ]; then
-            echo "user=${{ needs.capture-pr-author.outputs.pr_author }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "user=${{ github.actor }}" >> "$GITHUB_OUTPUT"
-          fi
+          echo "user=${{ github.event.pull_request.user.login }}" >> "$GITHUB_OUTPUT"
 
       - name: Calculate score
         id: score
         run: |
           SCORE=2
-
           FILES=$(git diff --name-only HEAD~1 HEAD || true)
-
           if echo "$FILES" | grep -qi "README.md"; then
             SCORE=$((SCORE + 4))
           fi
-
           if echo "$FILES" | grep -qi "screenshots/"; then
             SCORE=$((SCORE + 5))
           fi
-
           echo "score=$SCORE" >> "$GITHUB_OUTPUT"
 
       - name: Update leaderboard
