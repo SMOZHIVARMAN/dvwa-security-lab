@@ -29,14 +29,19 @@ jobs:
       - name: Calculate score
         id: score
         run: |
+          # Base points for merged PR
           SCORE=2
-          FILES=$(git diff --name-only HEAD~1 HEAD || true)
 
-          if echo "$FILES" | grep -qi "README.md"; then
+          # Get all files changed in the PR (not just last commit)
+          FILES=$(git diff --name-only origin/main...HEAD || true)
+
+          # README.md change = +4
+          if echo "$FILES" | grep -qi "^README.md$"; then
             SCORE=$((SCORE + 4))
           fi
 
-          if echo "$FILES" | grep -qi "screenshots/"; then
+          # screenshots folder change = +5
+          if echo "$FILES" | grep -qi "^screenshots/"; then
             SCORE=$((SCORE + 5))
           fi
 
@@ -48,11 +53,13 @@ jobs:
           SCORE="${{ steps.score.outputs.score }}"
           FILE="LEADERBOARD.md"
 
-          if [ ! -f "$FILE" ]; then
+          # Ensure leaderboard exists and has a valid table header
+          if [ ! -f "$FILE" ] || ! grep -q "| User | Score |" "$FILE"; then
             echo "| User | Score |" > "$FILE"
             echo "|------|-------|" >> "$FILE"
           fi
 
+          # Update existing user score or add new user
           if grep -q "| $USER |" "$FILE"; then
             awk -v user="$USER" -v score="$SCORE" '
               $0 ~ "\\| " user " \\|" {
