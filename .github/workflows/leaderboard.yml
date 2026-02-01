@@ -29,18 +29,18 @@ jobs:
       - name: Calculate score
         id: score
         run: |
-          # Base points for merged PR
-          SCORE=2
+          # Base points for merged PR (UPDATED: 10 points)
+          SCORE=10
 
           # Get all files changed in the PR (not just last commit)
           FILES=$(git diff --name-only origin/main...HEAD || true)
 
-          # README.md change = +4
+          # Root README.md change = +4
           if echo "$FILES" | grep -qi "^README.md$"; then
             SCORE=$((SCORE + 4))
           fi
 
-          # screenshots folder change = +5
+          # Root screenshots folder change = +5
           if echo "$FILES" | grep -qi "^screenshots/"; then
             SCORE=$((SCORE + 5))
           fi
