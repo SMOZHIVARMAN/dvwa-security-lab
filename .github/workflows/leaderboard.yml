@@ -4,20 +4,22 @@ permissions:
   contents: write
 
 on:
-  pull_request:
+  pull_request_target:
     types: [closed]
 
 jobs:
   update-leaderboard:
+    # Run only when PR is actually merged
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (base repo, not PR code)
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 2
+          ref: main
 
       - name: Determine contributor
         id: user
@@ -29,12 +31,15 @@ jobs:
         run: |
           SCORE=2
           FILES=$(git diff --name-only HEAD~1 HEAD || true)
+
           if echo "$FILES" | grep -qi "README.md"; then
             SCORE=$((SCORE + 4))
           fi
+
           if echo "$FILES" | grep -qi "screenshots/"; then
             SCORE=$((SCORE + 5))
           fi
+
           echo "score=$SCORE" >> "$GITHUB_OUTPUT"
 
       - name: Update leaderboard
@@ -67,5 +72,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add LEADERBOARD.md
-          git commit -m "chore: update leaderboard"
+          git commit -m "chore: update leaderboard" || echo "No changes to commit"
           git push
