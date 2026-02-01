@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 2   # still useful, but no longer relied on blindly
+          fetch-depth: 2
 
       - name: Calculate score
         id: score
@@ -32,7 +32,7 @@ jobs:
           # Base points
           SCORE=$((SCORE + 2))
 
-          # SAFELY determine changed files
+          # Safely determine changed files
           if git rev-parse HEAD~1 >/dev/null 2>&1; then
             FILES=$(git diff --name-only HEAD~1 HEAD)
           else
@@ -69,10 +69,10 @@ jobs:
 
           if grep -q "| $USER |" "$FILE"; then
             awk -v user="$USER" -v score="$SCORE" '
-              $0 ~ "\\| "user" \\|" {
+              $0 ~ "\\| " user " \\|" {
                 split($0,a,"|");
-                total=a[3]+score;
-                print "| "user" | "total" " |";
+                total=a[3] + score;
+                print "| " user " | " total " |";
                 next
               }
               { print }
