@@ -1,3 +1,0 @@
-# Vignesh Praveen
-
-## DVWA Submission

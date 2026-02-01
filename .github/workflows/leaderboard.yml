@@ -4,30 +4,31 @@ permissions:
   contents: write
 
 on:
-  pull_request:
-    types: [closed]
+  push:
+    branches:
+      - main
 
 jobs:
   leaderboard:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Calculate score
         id: score
         run: |
           SCORE=0
-          USER="${{ github.event.pull_request.user.login }}"
+          USER="${{ github.actor }}"
 
           # Base points
           SCORE=$((SCORE + 2))
 
-          # Files changed in PR
-          git fetch origin main
-          FILES=$(git diff --name-only origin/main...HEAD)
+          # Files changed in last commit
+          FILES=$(git diff --name-only HEAD~1 HEAD)
 
           # README check
           if echo "$FILES" | grep -qi "README.md"; then
@@ -39,29 +40,11 @@ jobs:
             SCORE=$((SCORE + 5))
           fi
 
-          # Labels
-          LABELS="${{ join(github.event.pull_request.labels.*.name, ' ') }}"
-
-          if echo "$LABELS" | grep -q "level:low"; then
-            SCORE=$((SCORE + 2))
-          elif echo "$LABELS" | grep -q "level:medium"; then
-            SCORE=$((SCORE + 3))
-          elif echo "$LABELS" | grep -q "level:high"; then
-            SCORE=$((SCORE + 4))
-          elif echo "$LABELS" | grep -q "level:impossible"; then
-            SCORE=$((SCORE + 5))
-          fi
-
-          # Fake penalty
-          if echo "$LABELS" | grep -q "^fake$"; then
-            SCORE=-10
-          fi
-
           echo "final_score=$SCORE" >> $GITHUB_OUTPUT
 
       - name: Update leaderboard
         run: |
-          USER="${{ github.event.pull_request.user.login }}"
+          USER="${{ github.actor }}"
           SCORE="${{ steps.score.outputs.final_score }}"
           FILE="LEADERBOARD.md"
 
@@ -70,7 +53,7 @@ jobs:
               $0 ~ "\\| "user" \\|" {
                 split($0,a,"|");
                 total=a[3]+score;
-                print "| "user" | "total" |";
+                print "| "user" | "total" " |";
                 next
               }
               { print }
@@ -81,8 +64,8 @@ jobs:
 
       - name: Commit leaderboard update
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add LEADERBOARD.md
-          git commit -m "chore: update leaderboard"
+          git commit -m "chore: update leaderboard" || echo "No changes"
           git push
