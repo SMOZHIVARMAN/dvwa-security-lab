@@ -4,22 +4,20 @@ permissions:
   contents: write
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types: [closed]
 
 jobs:
   leaderboard:
-    # Prevent infinite loop when bot commits leaderboard
-    if: github.actor != 'github-actions[bot]'
+    # Run only when PR is merged (not closed without merge)
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 2
+          fetch-depth: 0   # full history for PR diff
 
       - name: Calculate score
         id: score
@@ -27,19 +25,16 @@ jobs:
           set -e
 
           SCORE=0
-          USER="${{ github.actor }}"
+          USER="${{ github.event.pull_request.user.login }}"
 
-          # Base points
+          # Base points for merged PR
           SCORE=$((SCORE + 2))
 
-          # Safely determine changed files
-          if git rev-parse HEAD~1 >/dev/null 2>&1; then
-            FILES=$(git diff --name-only HEAD~1 HEAD)
-          else
-            echo "No previous commit found (first or empty commit)"
-            FILES=""
-          fi
+          # Get files changed in the PR
+          git fetch origin main
+          FILES=$(git diff --name-only origin/main...HEAD)
 
+          echo "PR Author: $USER"
           echo "Changed files:"
           echo "$FILES"
 
@@ -57,7 +52,7 @@ jobs:
 
       - name: Update leaderboard
         run: |
-          USER="${{ github.actor }}"
+          USER="${{ github.event.pull_request.user.login }}"
           SCORE="${{ steps.score.outputs.final_score }}"
           FILE="LEADERBOARD.md"
 
@@ -86,5 +81,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add LEADERBOARD.md
-          git commit -m "chore: update leaderboard" || echo "No leaderboard changes"
+          git commit -m "chore: update leaderboard"
           git push
