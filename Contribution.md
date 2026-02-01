@@ -32,7 +32,7 @@ This project maintains a **community leaderboard** to recognize meaningful contr
 ## 🧮 Scoring Rules (Strict & Location-Based)
 
 ### ✅ Base Contribution
-- Every merged Pull Request earns **+2 points**
+- Every merged Pull Request earns **+10 points**
 
 This applies to **any valid contribution**, including:
 - New folders
@@ -57,11 +57,11 @@ This applies to **any valid contribution**, including:
 
 | Change Made | Points |
 |------------|--------|
-| Any PR merged | 2 |
-| Edit root `README.md` | 6 |
-| Add image to root `screenshots/` | 7 |
-| New folder + files (anywhere else) | 2 |
-| `experiments/demo/screenshots/img.png` | 2 |
+| Any PR merged | 10 |
+| Edit root `README.md` | 14 |
+| Add image to root `screenshots/` | 15 |
+| New folder + files (anywhere else) | 10 |
+| `experiments/demo/screenshots/img.png` | 10 |
 
 ---
 
@@ -73,6 +73,7 @@ This applies to **any valid contribution**, including:
 | Spam or empty Pull Request | −10 |
 
 ⚠️ Penalties subtract from existing score  
+⚠️ Penalties are applied manually by the maintainer and are not automated.
 ⚠️ When a penalty applies, **no positive points are awarded for that PR**
 
 ---
