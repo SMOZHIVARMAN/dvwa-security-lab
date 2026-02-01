@@ -10,6 +10,8 @@ on:
 
 jobs:
   leaderboard:
+    # Prevent infinite loop when bot commits leaderboard
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
@@ -17,18 +19,24 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2   # IMPORTANT: allows HEAD~1 to exist
 
       - name: Calculate score
         id: score
         run: |
+          set -e
+
           SCORE=0
           USER="${{ github.actor }}"
 
-          # Base points
+          # Base points for merged PR
           SCORE=$((SCORE + 2))
 
-          # Files changed in last commit
+          # Files changed in the last commit
           FILES=$(git diff --name-only HEAD~1 HEAD)
+
+          echo "Changed files:"
+          echo "$FILES"
 
           # README check
           if echo "$FILES" | grep -qi "README.md"; then
@@ -40,13 +48,19 @@ jobs:
             SCORE=$((SCORE + 5))
           fi
 
-          echo "final_score=$SCORE" >> $GITHUB_OUTPUT
+          echo "final_score=$SCORE" >> "$GITHUB_OUTPUT"
 
       - name: Update leaderboard
         run: |
           USER="${{ github.actor }}"
           SCORE="${{ steps.score.outputs.final_score }}"
           FILE="LEADERBOARD.md"
+
+          # Ensure leaderboard file exists
+          if [ ! -f "$FILE" ]; then
+            echo "| User | Score |" > "$FILE"
+            echo "|------|-------|" >> "$FILE"
+          fi
 
           if grep -q "| $USER |" "$FILE"; then
             awk -v user="$USER" -v score="$SCORE" '
@@ -67,5 +81,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add LEADERBOARD.md
-          git commit -m "chore: update leaderboard" || echo "No changes"
+          git commit -m "chore: update leaderboard" || echo "No leaderboard changes"
           git push
