@@ -6,57 +6,65 @@ permissions:
 on:
   pull_request:
     types: [closed]
+  push:
+    branches:
+      - main
 
 jobs:
-  leaderboard:
-    # Run only when PR is merged (not closed without merge)
-    if: github.event.pull_request.merged == true
+  capture-pr-author:
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    outputs:
+      pr_author: ${{ steps.author.outputs.author }}
+    steps:
+      - name: Capture PR author
+        id: author
+        run: |
+          echo "author=${{ github.event.pull_request.user.login }}" >> "$GITHUB_OUTPUT"
 
+  update-leaderboard:
+    if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    needs: capture-pr-author
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # full history for PR diff
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2
+
+      - name: Determine contributor
+        id: user
+        run: |
+          if [ -n "${{ needs.capture-pr-author.outputs.pr_author }}" ]; then
+            echo "user=${{ needs.capture-pr-author.outputs.pr_author }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "user=${{ github.actor }}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Calculate score
         id: score
         run: |
-          set -e
+          SCORE=2
 
-          SCORE=0
-          USER="${{ github.event.pull_request.user.login }}"
+          FILES=$(git diff --name-only HEAD~1 HEAD || true)
 
-          # Base points for merged PR
-          SCORE=$((SCORE + 2))
-
-          # Get files changed in the PR
-          git fetch origin main
-          FILES=$(git diff --name-only origin/main...HEAD)
-
-          echo "PR Author: $USER"
-          echo "Changed files:"
-          echo "$FILES"
-
-          # README check
           if echo "$FILES" | grep -qi "README.md"; then
             SCORE=$((SCORE + 4))
           fi
 
-          # screenshots check
           if echo "$FILES" | grep -qi "screenshots/"; then
             SCORE=$((SCORE + 5))
           fi
 
-          echo "final_score=$SCORE" >> "$GITHUB_OUTPUT"
+          echo "score=$SCORE" >> "$GITHUB_OUTPUT"
 
       - name: Update leaderboard
         run: |
-          USER="${{ github.event.pull_request.user.login }}"
-          SCORE="${{ steps.score.outputs.final_score }}"
+          USER="${{ steps.user.outputs.user }}"
+          SCORE="${{ steps.score.outputs.score }}"
           FILE="LEADERBOARD.md"
 
-          # Ensure leaderboard file exists
           if [ ! -f "$FILE" ]; then
             echo "| User | Score |" > "$FILE"
             echo "|------|-------|" >> "$FILE"
